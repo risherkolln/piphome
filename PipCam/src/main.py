@@ -126,22 +126,21 @@ classNames = ["person",
 
 
 global_image = None
-success, global_image  = cap.read()
+success, global_image = cap.read()
 
 def process_cam_image():
     global global_image
     while True:
-        success, img  = cap.read()
-        global_image = img.copy()
-        """
-        results = model(img, stream=True)
+        success, frame = cap.read()
+        global_image = frame.copy()
+        results = model(frame, stream=True)
         for r in results:
             boxes = r.boxes
             for box in boxes:
                 x1, y1, x2, y2 = box.xyxy[0]
                 x1, y1, x2, y2 = int(x1), int(y1), int(x2), int(y2)
                 w, h = x2-x1, y2-y1
-                cvzone.cornerRect(img, (x1, y1, w, h))
+                cvzone.cornerRect(frame, (x1, y1, w, h))
 
                 conf = math.ceil((box.conf[0]*100))/100
 
@@ -149,10 +148,10 @@ def process_cam_image():
 
                 name = classNames[int(cls)]
 
-                cvzone.putTextRect(img, f'{name} 'f'{conf}', (max(0,x1), max(35,y1)), scale = 1.5)
+                cvzone.putTextRect(frame, f'{name} 'f'{conf}', (max(0,x1), max(35,y1)), scale = 1.5)
 
-      #  cv2.imshow("Image", img)"""
-      #  cv2.waitKey(1)
+        cv2.imshow("Image", frame)
+        cv2.waitKey(1)
 
 capture_thread = threading.Thread(target=process_cam_image)
 
@@ -174,5 +173,5 @@ def get_image():
     # Return the image data with appropriate content type
     return Response(image_bytes, mimetype='image/jpeg')
 
-#if __name__ == '__main3__':
-app.run(host='192.168.0.105', debug=False)
+if __name__ == '__main__':
+    app.run(host='192.168.0.150', debug=False)
