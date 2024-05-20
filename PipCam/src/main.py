@@ -174,4 +174,4 @@ def get_image():
     return Response(image_bytes, mimetype='image/jpeg')
 
 if __name__ == '__main__':
-    app.run(host='192.168.0.150', debug=False)
+    app.run(host='192.168.0.105', debug=False)
