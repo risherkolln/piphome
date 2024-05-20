@@ -132,6 +132,7 @@ def process_cam_image():
     global global_image
     while True:
         success, img  = cap.read()
+        """
         results = model(img, stream=True)
         for r in results:
             boxes = r.boxes
@@ -149,9 +150,9 @@ def process_cam_image():
 
                 cvzone.putTextRect(img, f'{name} 'f'{conf}', (max(0,x1), max(35,y1)), scale = 1.5)
 
-      #  cv2.imshow("Image", img)
+      #  cv2.imshow("Image", img)"""
         global_image = img.copy()
-        cv2.waitKey(1)
+      #  cv2.waitKey(1)
 
 capture_thread = threading.Thread(target=process_cam_image)
 
@@ -159,7 +160,7 @@ capture_thread = threading.Thread(target=process_cam_image)
 capture_thread.daemon = True
 capture_thread.start()
 
-@app.route('/get_image')
+@app.route('/cam')
 def get_image():
     global global_image
     image_copy = global_image.copy()
