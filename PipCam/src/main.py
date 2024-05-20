@@ -150,7 +150,7 @@ def process_cam_image():
 
                 cvzone.putTextRect(frame, f'{name} 'f'{conf}', (max(0,x1), max(35,y1)), scale = 1.5)
 
-        cv2.imshow("Image", frame)
+        #cv2.imshow("Image", frame)
         cv2.waitKey(1)
 
 capture_thread = threading.Thread(target=process_cam_image)
