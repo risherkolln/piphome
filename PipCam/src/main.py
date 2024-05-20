@@ -41,7 +41,7 @@ cap = cv2.VideoCapture(stream_uri.Uri)
 cap.set(3, 800)
 cap.set(4, 600)
 
-model = YOLO('../YOLO Weights/yolov8n.pt')
+model = YOLO('../YOLO Weights/yolov5n.pt')
 
 classNames = ["person",
               "bicycle",
