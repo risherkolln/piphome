@@ -10,7 +10,6 @@ import base64
 
 app = Flask(__name__)
 
-
 print("Init camera...")
 cam = ONVIFCamera('192.168.0.185', 8899, 'admin', '')
 print("Camera ok...")
@@ -30,7 +29,8 @@ profiles = media.GetProfiles()
 # Assuming you want to get the stream URI for the first profile
 if profiles:
     profile_token = profiles[0].token
-    stream_uri = media.GetStreamUri({'StreamSetup': {'Stream': 'RTP-Unicast', 'Transport': {'Protocol': 'RTSP'}}, 'ProfileToken': profile_token})
+    stream_uri = media.GetStreamUri(
+        {'StreamSetup': {'Stream': 'RTP-Unicast', 'Transport': {'Protocol': 'RTSP'}}, 'ProfileToken': profile_token})
     print("Stream URI:", stream_uri)
 else:
     print("No profiles found")
@@ -47,110 +47,112 @@ classNames = ["person",
               "bicycle",
               "car",
               "motorbike",
-              "hide",#"aeroplane",
+              "hide",  # "aeroplane",
               "bus",
-              "hide",#"train",
+              "hide",  # "train",
               "truck",
-              "hide",#"boat",
-              "hide",# "traffic light",
-              "hide",#"fire hydrant",
-              "hide",#"stop sign",
-              "hide",#"parking meter",
-              "hide",#"bench",
+              "hide",  # "boat",
+              "hide",  # "traffic light",
+              "hide",  # "fire hydrant",
+              "hide",  # "stop sign",
+              "hide",  # "parking meter",
+              "hide",  # "bench",
               "bird",
               "cat",
               "dog",
-              "hide",#"horse",
-              "hide",#"sheep",
-              "hide",#"cow",
-              "hide",#"elephant",
-              "hide",#"bear",
-              "hide",#"zebra",
-              "hide",#"giraffe",
-              "hide",#"backpack",
-              "hide",#"umbrella",
-              "hide",#"handbag",
-              "hide",#"tie",
-              "hide",#"suitcase",
-              "hide",#"frisbee",
-              "hide",#"skis",
-              "hide",#"snowboard",
-              "hide",#"sports ball",
-              "hide",#"kite",
+              "hide",  # "horse",
+              "hide",  # "sheep",
+              "hide",  # "cow",
+              "hide",  # "elephant",
+              "hide",  # "bear",
+              "hide",  # "zebra",
+              "hide",  # "giraffe",
+              "hide",  # "backpack",
+              "hide",  # "umbrella",
+              "hide",  # "handbag",
+              "hide",  # "tie",
+              "hide",  # "suitcase",
+              "hide",  # "frisbee",
+              "hide",  # "skis",
+              "hide",  # "snowboard",
+              "hide",  # "sports ball",
+              "hide",  # "kite",
               "baseball bat",
-              "hide",#"baseball glove",
-              "hide",#"skateboard",
-              "hide",#"surfboard",
-              "hide",#"tennis racket",
-              "hide",#"bottle",
-              "hide",#"wine glass",
-              "hide",#"cup",
-              "hide",#"fork",
+              "hide",  # "baseball glove",
+              "hide",  # "skateboard",
+              "hide",  # "surfboard",
+              "hide",  # "tennis racket",
+              "hide",  # "bottle",
+              "hide",  # "wine glass",
+              "hide",  # "cup",
+              "hide",  # "fork",
               "knife",
-              "hide",#"spoon",
-              "hide",#"bowl",
-              "hide",#"banana",
-              "hide",#"apple",
-              "hide",#"sandwich",
-              "hide",#"orange",
-              "hide",#"broccoli",
-              "hide",#"carrot",
-              "hide",#"hot dog",
-              "hide",#"pizza",
-              "hide",#"donut",
-              "hide",#"cake",
-              "hide",#"chair",
-              "hide",#"sofa",
-              "hide",#"pottedplant",
-              "hide",#"bed",
-              "hide",#"diningtable",
-              "hide",#"toilet",
+              "hide",  # "spoon",
+              "hide",  # "bowl",
+              "hide",  # "banana",
+              "hide",  # "apple",
+              "hide",  # "sandwich",
+              "hide",  # "orange",
+              "hide",  # "broccoli",
+              "hide",  # "carrot",
+              "hide",  # "hot dog",
+              "hide",  # "pizza",
+              "hide",  # "donut",
+              "hide",  # "cake",
+              "hide",  # "chair",
+              "hide",  # "sofa",
+              "hide",  # "pottedplant",
+              "hide",  # "bed",
+              "hide",  # "diningtable",
+              "hide",  # "toilet",
               "tvmonitor",
               "laptop",
-              "hide",#"mouse",
-              "hide",#"remote",
-              "hide",#"keyboard",
+              "hide",  # "mouse",
+              "hide",  # "remote",
+              "hide",  # "keyboard",
               "cell phone",
-              "hide",#"microwave",
-              "hide",#"oven",
-              "hide",#"toaster",
-              "hide",#"sink",
-              "hide",#"refrigerator",
-              "hide",#"book",
-              "hide",#"clock",
-              "hide",#"vase",
-              "hide",#"scissors",
-              "hide",#"teddy bear",
-              "hide",#"hair drier",
-              "hide"]#"toothbrush"]
-
+              "hide",  # "microwave",
+              "hide",  # "oven",
+              "hide",  # "toaster",
+              "hide",  # "sink",
+              "hide",  # "refrigerator",
+              "hide",  # "book",
+              "hide",  # "clock",
+              "hide",  # "vase",
+              "hide",  # "scissors",
+              "hide",  # "teddy bear",
+              "hide",  # "hair drier",
+              "hide"]  # "toothbrush"]
 
 global_image = None
 success, global_image = cap.read()
+
 
 def process_cam_image():
     global global_image
     while True:
         success, img = cap.read()
         global_image = img.copy()
-        results = model(img, stream=True)
-        for r in results:
-            boxes = r.boxes
-            for box in boxes:
-                x1, y1, x2, y2 = box.xyxy[0]
-                x1, y1, x2, y2 = int(x1), int(y1), int(x2), int(y2)
-                w, h = x2-x1, y2-y1
-                cvzone.cornerRect(img, (x1, y1, w, h))
+       # results = model(img, stream=True)
+        results = model.predict(img, imgsz=320)
+        # for r in results:
+        result = results[0]
+        boxes = result.boxes
+        for box in boxes:
+            x1, y1, x2, y2 = box.xyxy[0]
+            x1, y1, x2, y2 = int(x1), int(y1), int(x2), int(y2)
+            w, h = x2 - x1, y2 - y1
+            cvzone.cornerRect(img, (x1, y1, w, h))
 
-                conf = math.ceil((box.conf[0]*100))/100
+            conf = math.ceil((box.conf[0] * 100)) / 100
 
-                cls = box.cls[0]
+            cls = box.cls[0]
 
-                name = classNames[int(cls)]
+            name = classNames[int(cls)]
 
-                cvzone.putTextRect(img, f'{name} 'f'{conf}', (max(0,x1), max(35,y1)), scale = 1.5)
+            cvzone.putTextRect(img, f'{name} 'f'{conf}', (max(0, x1), max(35, y1)), scale=1.5)
 
-        #cv2.imshow("Image", frame)
+        # cv2.imshow("Image", frame)
         cv2.waitKey(1)
 
 capture_thread = threading.Thread(target=process_cam_image)
@@ -158,6 +160,7 @@ capture_thread = threading.Thread(target=process_cam_image)
 # Start the thread
 capture_thread.daemon = True
 capture_thread.start()
+
 
 @app.route('/cam')
 def get_image():
@@ -172,6 +175,7 @@ def get_image():
 
     # Return the image data with appropriate content type
     return Response(image_bytes, mimetype='image/jpeg')
+
 
 if __name__ == '__main__':
     app.run(host='192.168.0.105', debug=False)
